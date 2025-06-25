@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Pose Detection</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.3.0/dist/tf.min.js"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.8.6/dist/tf.min.js"></script>  
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
   <style>
     body { margin: 0; overflow: hidden; }
@@ -36,10 +36,11 @@
       const modelURL = URL + "model.json";
       const metadataURL = URL + "metadata.json";
 
-      model = await tmPose.load(modelURL, metadataURL);
+      
       webcam = new tmPose.Webcam(400, 400, true);
       await webcam.setup();
       await webcam.play();
+      model = await tmPose.load(modelURL, metadataURL);
 
       document.body.appendChild(webcam.canvas);
       ctx = webcam.canvas.getContext("2d");
