@@ -37,7 +37,7 @@
       const metadataURL = URL + "metadata.json";
 
       model = await tmPose.load(modelURL, metadataURL);
-      webcam = new tmPose.Webcam(400, 400, true);
+      webcam = new tmPose.Webcam(224, 224, true);
       await webcam.setup();
       await webcam.play();
       
@@ -51,7 +51,7 @@
 
     async function loop() {
       webcam.update();
-      await predict();
+      predict();
       window.requestAnimationFrame(loop);
     }
 
