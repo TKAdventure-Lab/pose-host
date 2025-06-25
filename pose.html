@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Pose Detection</title>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #label {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      font-size: 18px;
+    }
+    canvas {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+  </style>
+</head>
+<body>
+  <div id="label">Loading model...</div>
+  <script>
+    const URL = "https://teachablemachine.withgoogle.com/models/1taFGx8dw9RvfLRfQ2H0nyJ-AE2t4K9jt/";
+
+    let model, webcam, ctx;
+
+    async function init() {
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+
+      model = await tmPose.load(modelURL, metadataURL);
+      webcam = new tmPose.Webcam(400, 400, true);
+      await webcam.setup();
+      await webcam.play();
+
+      document.body.appendChild(webcam.canvas);
+      ctx = webcam.canvas.getContext("2d");
+
+      window.requestAnimationFrame(loop);
+    }
+
+    async function loop() {
+      webcam.update();
+      await predict();
+      window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+      const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+      const prediction = await model.predict(posenetOutput);
+
+      let highest = prediction.reduce((a, b) =>
+        a.probability > b.probability ? a : b
+      );
+
+      document.getElementById("label").innerText =
+        `${highest.className} (${(highest.probability * 100).toFixed(1)}%)`;
+
+      // Optional: draw keypoints
+      ctx.clearRect(0, 0, webcam.canvas.width, webcam.canvas.height);
+      model.drawPose(pose, webcam.canvas);
+    }
+
+    init();
+  </script>
+</body>
+</html>
