@@ -36,11 +36,11 @@
       const modelURL = URL + "model.json";
       const metadataURL = URL + "metadata.json";
 
-      
+      model = await tmPose.load(modelURL, metadataURL);
       webcam = new tmPose.Webcam(400, 400, true);
       await webcam.setup();
       await webcam.play();
-      model = await tmPose.load(modelURL, metadataURL);
+      
 
       document.body.appendChild(webcam.canvas);
       ctx = webcam.canvas.getContext("2d");
